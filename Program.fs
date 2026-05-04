@@ -3,7 +3,7 @@
 open App.Rock
 open System
 open App.Menu
-
+open App.Types
 
 mostrar()
 |> fun e -> match e.Option with

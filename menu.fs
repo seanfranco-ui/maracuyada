@@ -8,15 +8,13 @@ open System.Threading
 // del module App.Utils
 //
 open App.Utils
+open App.Types
 
 type MenuState =
 | Active
 | Terminated
 
-type Command =
-| NewRockSim
-| NewMonsterSim
-| Exit
+
 
 type State = {
     MenuState: MenuState

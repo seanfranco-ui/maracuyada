@@ -10,7 +10,7 @@ open System.Reflection
 [<assembly: System.Reflection.AssemblyCompanyAttribute("maracuyada")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
-[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")>]
+[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4deb8d4aee61035232e5fb2ce2a99b264621dff5")>]
 [<assembly: System.Reflection.AssemblyProductAttribute("maracuyada")>]
 [<assembly: System.Reflection.AssemblyTitleAttribute("maracuyada")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]
