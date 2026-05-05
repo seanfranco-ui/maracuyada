@@ -27,3 +27,4 @@ C:\Users\USUARIO\Desktop\efshar3\maracuyada\obj\Debug\net8.0\refint\maracuyada.d
 C:\Users\USUARIO\Desktop\efshar3\maracuyada\obj\Debug\net8.0\maracuyada.pdb
 C:\Users\USUARIO\Desktop\efshar3\maracuyada\obj\Debug\net8.0\maracuyada.genruntimeconfig.cache
 C:\Users\USUARIO\Desktop\efshar3\maracuyada\obj\Debug\net8.0\ref\maracuyada.dll
+C:\Users\USUARIO\Desktop\efshar3\maracuyada\obj\Debug\net8.0\maracuyada.sourcelink.json

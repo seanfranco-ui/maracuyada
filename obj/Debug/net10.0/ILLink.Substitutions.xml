@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="maracuyada">
+    <resource name="FSharpSignatureData.maracuyada" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.maracuyada" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.maracuyada" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.maracuyada" action="remove"></resource>
+    <resource name="FSharpOptimizationData.maracuyada" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.maracuyada" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.maracuyada" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.maracuyada" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.maracuyada" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.maracuyada" action="remove"></resource>
+  </assembly>
+</linker>

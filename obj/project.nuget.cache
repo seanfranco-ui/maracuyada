@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "to/uufNNgpc=",
+  "dgSpecHash": "Xb4VMTbQBv4=",
   "success": true,
   "projectFilePath": "C:\\Users\\USUARIO\\Desktop\\efshar3\\maracuyada\\maracuyada.fsproj",
   "expectedPackageFiles": [
-    "C:\\Users\\USUARIO\\.nuget\\packages\\fsharp.core\\8.0.403\\fsharp.core.8.0.403.nupkg.sha512"
+    "C:\\Users\\USUARIO\\.nuget\\packages\\fsharp.core\\10.0.103\\fsharp.core.10.0.103.nupkg.sha512"
   ],
   "logs": []
 }

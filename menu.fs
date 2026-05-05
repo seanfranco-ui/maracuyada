@@ -15,7 +15,6 @@ type MenuState =
 | Terminated
 
 
-
 type State = {
     MenuState: MenuState
     X: int
@@ -24,24 +23,21 @@ type State = {
     CursorX: int
     Commands: (Command * string) array
     RedrawScreen: bool
-    Enter : bool
-    Option : Command
 }
 
 let initialState = {
     MenuState = Active
     X = 20
-    Y = Console.BufferHeight/2
+    Y = 10
     CurSorSelection = 0
     CursorX = 18
     Commands = [|
         NewRockSim,"Simulacion de Roca"
         NewMonsterSim, "Simulacion de Monstruo"
+        NewSaludo,"Modulo de Saludo"
         Exit,"Salir"
     |]
     RedrawScreen = true
-    Enter = false
-    Option = NewRockSim
 }
 
 let drawMenu state =
@@ -58,10 +54,7 @@ let redrawScreen state =
         {state with RedrawScreen = false}
     else
         state
-let lookForEnter key state =
-    match key with
-    |ConsoleKey.Enter -> {state with Enter = true}
-    |_ -> {state with Enter = false}    
+
 let updateMenuKeyboard key state =
     let newState =
         match key with 
@@ -80,43 +73,28 @@ let processKeyboard state =
         let k = Console.ReadKey true
         state
         |> updateMenuKeyboard k.Key
-        |> lookForEnter k.Key
     else
         state
-    
-let rec menuState state=
-    let stateM =
-     processKeyboard state 
-     |> redrawScreen
-    if stateM.Enter = true then 
-         match stateM.CurSorSelection with
-         |0 -> {stateM with MenuState = Terminated; Option = NewRockSim } 
-         |1 -> 
-               {stateM with MenuState = Terminated; Option = NewMonsterSim } 
-         |2 -> {stateM with MenuState = Terminated; Option = Exit } 
-         |_-> {stateM with MenuState = Terminated; Option = Exit } 
-        else
-         menuState stateM          
 let rec mainLoop state =
     let newState = 
         state
         |> processKeyboard
         |> redrawScreen
-        |> menuState
     if newState.MenuState = Active then
         Thread.Sleep 25
         mainLoop newState
     else
-     newState    
+        state
 
 let mostrar() =
     let oldForeground = Console.ForegroundColor
     Console.CursorVisible <- false
 
-    let opcion= initialState
-                        |> mainLoop
+    let state =
+        initialState
+        |> mainLoop
 
     Console.CursorVisible <- true
     Console.ForegroundColor <- oldForeground
     Console.Clear()
-    opcion
+    fst state.Commands[state.CurSorSelection]
