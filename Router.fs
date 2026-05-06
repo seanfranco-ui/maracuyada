@@ -17,7 +17,7 @@ let initialState = ShowingMenu
 
 let rec mainLoop state =
     match state with 
-    | ShowingMenu -> 
+    | ShowingMenu ->
         match Menu.mostrar() with 
         | NewRockSim -> ShowingRock
         | NewMonsterSim -> ShowingMonster

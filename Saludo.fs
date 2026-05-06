@@ -63,15 +63,20 @@ let updateSaludoKeyboard key state =
 let escribirNombre (key: ConsoleKeyInfo) state  =
      let y  = [state.KeyboardState.data]
      let x = int key.KeyChar
-     let ab= 
-      if (x>=48 && x<=57) || (x>=65 && x<=90) || (x>=97 && x<=122) then [
-       key.KeyChar
-       |> string
-       ]
-      else
-       [""] 
-     let r : string seq = Seq.append y ab 
-     {state with KeyboardState.data = r |> Seq.reduce (fun a b -> a + b); RedrawScreen = true} 
+     if (key.Key = ConsoleKey.Backspace) = false  then
+      let ab= 
+       if (x>=48 && x<=57) || (x>=65 && x<=90) || (x>=97 && x<=122) then [
+        key.KeyChar
+        |> string
+        ]
+       else
+        [""] 
+      let r : string seq = Seq.append y ab 
+      {state with KeyboardState.data = r |> Seq.reduce (fun a b -> a + b); RedrawScreen = true} 
+     else
+      let lenght = state.KeyboardState.data.Length - 1
+      let r2 =   state.KeyboardState.data.Substring(0, max 0 lenght)
+      {state with KeyboardState.data = r2; RedrawScreen = true; KeyboardState.CursorX = state.KeyboardState.CursorX - 1 }
        
     
     
