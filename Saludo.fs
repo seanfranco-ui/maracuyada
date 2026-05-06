@@ -65,7 +65,7 @@ let escribirNombre (key: ConsoleKeyInfo) state  =
      let x = int key.KeyChar
      if (key.Key = ConsoleKey.Backspace) = false  then
       let ab= 
-       if (x>=48 && x<=57) || (x>=65 && x<=90) || (x>=97 && x<=122) then [
+       if (x>=48 && x<=57) || (x>=65 && x<=90) || (x>=97 && x<=122) || x = 32 then [
         key.KeyChar
         |> string
         ]
