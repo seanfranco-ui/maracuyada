@@ -14,6 +14,7 @@ type State = {
     x: int
     y: int
     RedrawScreen: bool
+ 
 }
 
 let initialState = {
@@ -21,11 +22,10 @@ let initialState = {
     x = Console.BufferWidth/2
     y = Console.BufferHeight/2
     RedrawScreen = true
+  
 }
-
 let displayMonster state =
     displayMessage state.x state.y ConsoleColor.Yellow "👽"
-    state
 
 let updateMonsterKeyboard key state =
     let newState =
@@ -40,31 +40,18 @@ let updateMonsterKeyboard key state =
         {newState with RedrawScreen = true}
     else
         state 
-let processKeyboard state =
-    if Console.KeyAvailable then 
-        let k = Console.ReadKey true
-        state 
-        |> updateMonsterKeyboard k.Key
-    else
-        state
 
-let redrawScreen state =
-    if state.RedrawScreen then 
-        Console.Clear()
-        state |> displayMonster
-        |> fun s ->
-            {s with RedrawScreen=false}
-    else
-        state
-
-let rec mainLoop state =
-    let newState =
-        state
-        |> processKeyboard
-        |> redrawScreen
-    if newState.ProgramState <> Terminated then 
-        Thread.Sleep 25
-        mainLoop newState
+let pipeline = [||]
+let alternativeBoard = [||]
+let mainLoop  =
+    createMainLoop 
+        pipeline 
+        (fun s -> s.ProgramState = Running) 
+        [| updateMonsterKeyboard|]
+        [| displayMonster|]
+        (fun s -> s.RedrawScreen)
+        (fun s -> {s with RedrawScreen=false})
+        alternativeBoard
 
 let mostrar() =
     Console.Clear()
@@ -72,6 +59,7 @@ let mostrar() =
 
     initialState
     |> mainLoop
+    |> ignore
 
     Console.CursorVisible <- true
     Console.Clear()

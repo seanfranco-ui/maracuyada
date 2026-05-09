@@ -47,13 +47,6 @@ let drawMenu state =
     )
 
     displayMessage state.CursorX (state.Y+state.CurSorSelection) ConsoleColor.Yellow "*"
-let redrawScreen state =
-    if state.RedrawScreen then
-        Console.Clear()
-        state |> drawMenu
-        {state with RedrawScreen = false}
-    else
-        state
 
 let updateMenuKeyboard key state =
     let newState =
@@ -68,23 +61,18 @@ let updateMenuKeyboard key state =
     else
         state
 
-let processKeyboard state =
-    if Console.KeyAvailable then 
-        let k = Console.ReadKey true
-        state
-        |> updateMenuKeyboard k.Key
-    else
-        state
-let rec mainLoop state =
-    let newState = 
-        state
-        |> processKeyboard
-        |> redrawScreen
-    if newState.MenuState = Active then
-        Thread.Sleep 25
-        mainLoop newState
-    else
-        state
+
+let pipeline = [||]        
+let alternativeBoard = [||]
+let mainLoop  =
+        createMainLoop 
+         pipeline 
+         (fun s -> s.MenuState = Active) 
+         [| updateMenuKeyboard|]
+         [| drawMenu|]
+         (fun s -> s.RedrawScreen)
+         (fun s -> {s with RedrawScreen=false})
+         alternativeBoard
 
 let mostrar() =
     let oldForeground = Console.ForegroundColor

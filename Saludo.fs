@@ -11,7 +11,6 @@ type ProgramState =
 
 
 type KeyboardHelper =
-| Inactive
 | Active
 | WithData
 
@@ -20,15 +19,15 @@ type KeyBoardState = {
     data: string
     x: int
     y: int
-    CursorX: int
+
 }
 
 let initialKeyboard = {
-    KeyboardHelper = Inactive
+    KeyboardHelper = Active
     data = ""
     x = 0
     y = 0
-    CursorX = 0
+
 }
 
 type State = {
@@ -37,6 +36,7 @@ type State = {
     Clock: int
     RedrawScreen: bool
     KeyboardState: KeyBoardState
+    Mensaje : string
 }
 
 let initialState = {
@@ -45,6 +45,7 @@ let initialState = {
     Clock = 0
     RedrawScreen = true
     KeyboardState = initialKeyboard
+    Mensaje = "Entra tu Nombre: "
 }
 
 let updateTick state =
@@ -60,11 +61,15 @@ let updateSaludoKeyboard key state =
     match key with 
     | ConsoleKey.Escape -> {state with ProgramState=Terminated}
     | _ -> state
+let Enter key state =
+    match key with 
+    | ConsoleKey.Enter -> {state with KeyboardState.KeyboardHelper = WithData}
+    | _ -> state    
 let escribirNombre (key: ConsoleKeyInfo) state  =
      let y  = [state.KeyboardState.data]
      let x = int key.KeyChar
      if (key.Key = ConsoleKey.Backspace) = false  then
-      let ab= 
+      let ab = 
        if (x>=48 && x<=57) || (x>=65 && x<=90) || (x>=97 && x<=122) || x = 32 then [
         key.KeyChar
         |> string
@@ -76,59 +81,40 @@ let escribirNombre (key: ConsoleKeyInfo) state  =
      else
       let lenght = state.KeyboardState.data.Length - 1
       let r2 =   state.KeyboardState.data.Substring(0, max 0 lenght)
-      {state with KeyboardState.data = r2; RedrawScreen = true; KeyboardState.CursorX = state.KeyboardState.CursorX - 1 }
+      {state with KeyboardState.data = r2; RedrawScreen = true;}
        
     
-    
 
-let processKeyboard state =
-    if Console.KeyAvailable then 
-        let k = Console.ReadKey true
-        state
-        |> updateSaludoKeyboard k.Key
-        |> escribirNombre k
-    else
-        state
+
+
 
 let redrawClock state =
     displayMessageRight 0  $"{state.Clock}" ConsoleColor.Yellow
-    state
 
 
-let redrawMensaje (state:State) =
-    displayMessage 0 15 ConsoleColor.Cyan "Entra tu nombre: "
-    displayMessage state.KeyboardState.x state.KeyboardState.y ConsoleColor.White state.KeyboardState.data
-    displayMessage state.KeyboardState.CursorX state.KeyboardState.y ConsoleColor.DarkBlue "|" 
-    let helper = {
-        KeyboardHelper = Active
-        data = state.KeyboardState.data
-        x = 18
-        y = 15
-        CursorX = 18 + (state.KeyboardState.data.Length)
-    }
-    {state with KeyboardState = helper; RedrawScreen = true}
+let mostrarSaludo estado =
+    match estado.KeyboardState.KeyboardHelper with 
+    | Active ->
+        displayMessage estado.KeyboardState.x  estado.KeyboardState.y ConsoleColor.Yellow estado.Mensaje
+        displayMessage (estado.KeyboardState.x+estado.Mensaje.Length) estado.KeyboardState.y ConsoleColor.Yellow estado.KeyboardState.data
+        displayMessage (estado.KeyboardState.data.Length+estado.Mensaje.Length) estado.KeyboardState.y ConsoleColor.Yellow "☠️"
+    | WithData ->
+        displayMessage estado.KeyboardState.x  estado.KeyboardState.y ConsoleColor.Cyan $"Hola {estado.KeyboardState.data}"
 
-let redrawScreen state =
-    if state.RedrawScreen then 
-        Console.Clear()
-        state
-        |> redrawClock
-        |> redrawMensaje
-        |> fun s ->        
-        {s with RedrawScreen = false}
-    else
-        state
-
-let rec mainLoop state =
-    let newState =
-        state
-        |> updateTick
-        |> updateClock
-        |> processKeyboard
-        |> redrawScreen
-    if newState.ProgramState <> Terminated then 
-        Thread.Sleep 25
-        mainLoop newState
+let pipeline = [|
+    updateClock
+    updateTick
+|]
+let alternativeBoard = [|escribirNombre|]
+let mainLoop  =
+        createMainLoop 
+         pipeline 
+         (fun s -> s.ProgramState = Running) 
+         [| Enter;updateSaludoKeyboard|]
+         [| redrawClock;mostrarSaludo|]
+         (fun s -> s.RedrawScreen)
+         (fun s -> {s with RedrawScreen=false})
+         alternativeBoard
 
 let mostrar() =
     Console.Clear()
@@ -136,6 +122,8 @@ let mostrar() =
 
     initialState 
     |> mainLoop
-
+    |> ignore
+    
     Console.CursorVisible <- true
     Console.Clear()
+    

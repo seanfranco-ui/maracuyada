@@ -28,52 +28,46 @@ let initialState = {
 let updateTick state =
    {state with Tick = state.Tick+1}
 
-let lookForEnter key state=
-     match key with
-     |ConsoleKey.Enter -> {state with enter = true; rockY = 0}
-     |_ -> {state with enter = false}
-let lookForESC key state =
-    match key with
-    |ConsoleKey.Escape -> {state with ProgramState = Terminated}
-    |_ -> state
+let updateRockKeyboard key state =
+    let newState =
+        match key with 
+        | ConsoleKey.Enter ->
+            {state with rockY=0}
+        | ConsoleKey.Escape ->
+            {state with ProgramState = Terminated}
+        | _ -> state
+
+    if newState <> state then 
+        {newState with redrawScreen =true}
+    else
+        state
 let displayRock state =
     displayMessage state.rockX state.rockY  ConsoleColor.Green "*"
-    state
+    
 let updateRockPos state=
      if state.Tick <> 0  && state.Tick % 5 = 0 then
       {state with rockY = min (height-1) (state.rockY + 1 ); redrawScreen = true }
      else
       state    
 
-let processKeyboard state =
-    if Console.KeyAvailable then 
-        let k = Console.ReadKey true
-        state
-        |> lookForEnter k.Key
-        |> lookForESC k.Key
-    else
-        state     
-let redrawScreen state =
-    if state.redrawScreen then 
-        Console.Clear()
-        state
-        |> displayRock
-        |> fun s -> {s with redrawScreen=false}
-    else
-     state
-let rec mainLoop state =
-    let newState =
-     state
-     |> updateTick
-     |> processKeyboard
-     |> updateRockPos
-     |> redrawScreen 
-    if newState.ProgramState = Active then
-     Thread.Sleep 25
-     mainLoop newState              
+let pipeline =[|
+    updateTick
+    updateRockPos
+|]     
+let alternativeBoard = [||]
+let mainLoop =
+        createMainLoop 
+         pipeline 
+         (fun s -> s.ProgramState = Active) 
+         [| updateRockKeyboard|]
+         [| displayRock|]
+         (fun s -> s.redrawScreen)
+         (fun s -> {s with redrawScreen=false})
+         alternativeBoard
 let Rock() =
  initialState
  |> mainLoop 
+ |> ignore
  Console.ForegroundColor <- oldcolor
  Console.BackgroundColor <- oldBlack
  Console.Clear()      
